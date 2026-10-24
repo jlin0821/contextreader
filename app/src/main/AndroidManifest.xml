@@ -4,7 +4,7 @@
 
     <application
         android:allowBackup="true"
-        android:label="Text Cleaner TTS"
+        android:label="faster TTS"
         android:supportsRtl="true">
 
         <activity android:name=".MainActivity" android:exported="true">
@@ -17,7 +17,7 @@
         <!-- Context Menu Option 1: Standard Clean -->
         <activity
             android:name=".CleanTextActivity"
-            android:label="a🔊"
+            android:label="🔊"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
@@ -29,7 +29,7 @@
         <!-- Context Menu Option 2: No Brackets Clean -->
         <activity
             android:name=".NoBracketsActivity"
-            android:label="a🧹"
+            android:label="🧹"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />

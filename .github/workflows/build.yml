@@ -19,6 +19,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Download & Setup Gradle Engine
+        run: |
+          wget https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
+
+      - name: Generate Missing Wrapper
+        run: gradle wrapper --gradle-version 8.5
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 

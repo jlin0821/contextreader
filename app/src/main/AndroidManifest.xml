@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.textcleaner">
 
     <application
         android:allowBackup="true"
-        android:label="Text Cleaner"
+        android:label="Text Cleaner TTS"
         android:supportsRtl="true">
 
         <activity android:name=".MainActivity" android:exported="true">
@@ -13,10 +14,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Ultra Short Label 1 -->
+        <!-- Context Menu Option 1: Standard Clean -->
         <activity
             android:name=".CleanTextActivity"
-            android:label="Clean"
+            android:label="a🔊"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
@@ -25,10 +26,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Ultra Short Label 2 -->
+        <!-- Context Menu Option 2: No Brackets Clean -->
         <activity
             android:name=".NoBracketsActivity"
-            android:label="No [ ]"
+            android:label="a🧹"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />

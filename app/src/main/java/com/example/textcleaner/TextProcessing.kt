@@ -3,9 +3,8 @@ package com.example.textcleaner
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import java.util.Locale
 
 class MainActivity : Activity() {
@@ -58,16 +57,40 @@ abstract class BaseTextActivity : Activity(), TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
             val langResult = tts?.setLanguage(Locale.getDefault())
             if (langResult == TextToSpeech.LANG_MISSING_DATA || langResult == TextToSpeech.LANG_NOT_SUPPORTED) {
-                tts?.language = Locale.US // Fallback to US English if default fails
+                tts?.language = Locale.US
             }
-            
-            // Speak the text
-            tts?.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null, "TTS_ID")
-            
-            // Keep the activity alive for 3 seconds so the speech engine finishes outputting audio before shutting down
-            Handler(Looper.getMainLooper()).postDelayed({
-                finish()
-            }, 3000)
+
+            // Don't steal audio focus from background media
+            val audioAttributes = android.media.AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build()
+            tts?.setAudioAttributes(audioAttributes)
+
+            // Split long text into safe 3,900-character chunks to bypass system limits
+            val chunks = textToSpeak.chunked(3900)
+            val lastIndex = chunks.size - 1
+
+            // Listen for when the VERY LAST chunk finishes before shutting down
+            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                override fun onStart(utteranceId: String?) {}
+                override fun onDone(utteranceId: String?) {
+                    if (utteranceId == "CHUNK_$lastIndex") {
+                        finish()
+                    }
+                }
+                override fun onError(utteranceId: String?) {
+                    if (utteranceId == "CHUNK_$lastIndex") {
+                        finish()
+                    }
+                }
+            })
+
+            // Feed chunks sequentially into the queue
+            for ((i, chunk) in chunks.withIndex()) {
+                val queueMode = if (i == 0) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+                tts?.speak(chunk, queueMode, null, "CHUNK_$i")
+            }
         } else {
             finish()
         }

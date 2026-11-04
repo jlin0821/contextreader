@@ -3,6 +3,7 @@ package com.example.textcleaner
 import android.app.Activity
 import android.app.Service
 import android.content.Intent
+import android.os.Bundle
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
@@ -126,14 +127,14 @@ class TtsService : Service(), TextToSpeech.OnInitListener {
 
         for ((i, chunk) in chunks.withIndex()) {
             val queueMode = if (i == 0) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
-            val utteranceId = if (i == chunks.size - 1) "CHUNK_LAST_$batchId" else "CHUNK_$i_$batchId"
+            val utteranceId = if (i == chunks.size - 1) "CHUNK_LAST_$batchId" else "CHUNK_${i}_$batchId"
             tts?.speak(chunk, queueMode, null, utteranceId)
         }
     }
 
     override fun onDestroy() {
         tts?.stop()
-        tts->shutdown()
+        tts?.shutdown() // Fixed arrow typo to safe call
         tts = null
         super.onDestroy()
     }
